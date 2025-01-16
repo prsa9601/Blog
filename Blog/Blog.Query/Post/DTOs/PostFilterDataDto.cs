@@ -22,7 +22,6 @@ namespace Blog.Query.Post.DTOs
         public PostSearchOrderBy? SearchOrderBy { get; set; }
         public string? Title { get; set; }
         public long CategoryId { get; set; }
-
     }
     public class PostFilterResult : BaseFilter<PostFilterDataDto, PostFilterParam>
     {
@@ -32,6 +31,5 @@ namespace Blog.Query.Post.DTOs
     {
         visit,
         latest
-
     }
 }

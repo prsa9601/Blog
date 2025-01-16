@@ -19,12 +19,6 @@ namespace Blog.Application.Category.Edit
             RuleFor(r => r.Slug)
                 .NotEmpty().WithMessage(ValidationMessages.required("Slug"));
 
-            RuleFor(r => r.MetaTag)
-                .NotEmpty().WithMessage(ValidationMessages.required("MetaTag"));
-
-            RuleFor(r => r.MetaDescription)
-                .NotEmpty().WithMessage(ValidationMessages.required("MetaDescription"));
-
         }
     }
 }

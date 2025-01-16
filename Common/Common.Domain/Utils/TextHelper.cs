@@ -19,7 +19,7 @@ namespace Common.Domain.Utils
             return email;
         }
 
-        public static string ToSlug(this string url)
+        public static string  ToSlug(this string url)
         {
             return url.Trim().ToLower()
                 .Replace("$", "")

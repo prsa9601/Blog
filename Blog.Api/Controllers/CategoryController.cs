@@ -20,7 +20,7 @@ namespace Blog.Api.Controllers
             _facade = facade;
         }
         [HttpPost]
-        public async Task<ApiResult> Create(CreateCategoryCommand command)
+        public async Task<ApiResult<long>> Create(CreateCategoryCommand command)
         {
             var result = await _facade.CreateCategory(command);
             return CommandResult(result);
@@ -40,7 +40,7 @@ namespace Blog.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ApiResult<CategoryDto?>> GetById(long id)
         {
-            var result = await _facade.GetCommentById(id);
+            var result = await _facade.GetCategoryById(id);
             return QueryResult(result);
         }
         [HttpGet]
@@ -49,17 +49,17 @@ namespace Blog.Api.Controllers
             var result = await _facade.GetCategories();
             return QueryResult(result);
         }
-        [HttpGet("CategoriesForShop")]
-        public async Task<ApiResult<List<CategoryForShopDto?>>> GetCategoriesForShop()
+        [HttpGet("GetByParentId{id}")]
+        public async Task<ApiResult<List<ChildCategoryDto?>>> GetCategoriesByParentId(long id)
         {
-            var result = await _facade.GetCategoriesForShop();
+            var result = await _facade.GetByParentId(id);
             return QueryResult(result);
         }
-        [HttpGet("CategoryForShop/{id}")]
-        public async Task<ApiResult<CategoryForShopDto?>> GetCategoryForShop(long id)
-        {
-            var result = await _facade.GetCategoryForShop(id);
-            return QueryResult(result);
-        }
+        //[HttpGet("CategoryForShop/{id}")]
+        //public async Task<ApiResult<CategoryForShopDto?>> GetCategoryForShop(long id)
+        //{
+        //    var result = await _facade.GetCategoryForShop(id);
+        //    return QueryResult(result);
+        //}
     }
 }

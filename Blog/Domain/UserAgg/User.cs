@@ -1,4 +1,5 @@
-﻿using Blog.Domain.UserAgg.Services;
+﻿using Blog.Domain.UserAgg.Enums;
+using Blog.Domain.UserAgg.Services;
 using Common.Domain;
 using Common.Domain.Exceptions;
 
@@ -19,17 +20,26 @@ namespace Blog.Domain.UserAgg
             Password = password;
             PhoneNumber = phoneNumber;
             UserName = userName;
+            IsActive = true;
             Roles = new List<UserRole>();
             Tokens = new List<UserToken>();
+            Addresses = new();
+            Wallets = new List<Wallet>();
         }
         public string Name { get; set; }
         public string Family { get; set; }
         public string AvatarName { get; set; } 
+        public bool IsActive { get; set; }
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
+
+        public Gender Gender { get; private set; }
+        public List<Wallet> Wallets { get; }
+        public List<UserAddress> Addresses { get; }
         public List<UserRole> Roles { get; }
         public List<UserToken> Tokens { get; }
+
         public void SetRoles(List<UserRole> roles)
         {
             roles.ForEach(f => f.UserId = Id);
@@ -96,6 +106,50 @@ namespace Blog.Domain.UserAgg
 
             Tokens.Remove(token);
             return token.HashJwtToken;
+        }
+        public void AddAddress(UserAddress address)
+        {
+            address.UserId = Id;
+            Addresses.Add(address);
+        }
+
+        public void DeleteAddress(long addressId)
+        {
+            var oldAddress = Addresses.FirstOrDefault(f => f.Id == addressId);
+            if (oldAddress == null)
+                throw new NullOrEmptyDomainDataException("Address Not found");
+
+            Addresses.Remove(oldAddress);
+        }
+
+        public void EditAddress(UserAddress address, long addressId)
+        {
+            var oldAddress = Addresses.FirstOrDefault(f => f.Id == addressId);
+            if (oldAddress == null)
+                throw new NullOrEmptyDomainDataException("Address Not found");
+
+
+            oldAddress.Edit(address.Shire, address.City, address.PostalCode, address.PostalAddress, address.PhoneNumber,
+                address.Name, address.Family, address.NationalCode);
+        }
+
+        public void SetActiveAddress(long addressId)
+        {
+            var currentAddress = Addresses.FirstOrDefault(f => f.Id == addressId);
+            if (currentAddress == null)
+                throw new NullOrEmptyDomainDataException("Address Not found");
+
+            foreach (var address in Addresses)
+            {
+                address.SetDeActive();
+            }
+            currentAddress.SetActive();
+        }
+
+        public void ChargeWallet(Wallet wallet)
+        {
+            wallet.UserId = Id;
+            Wallets.Add(wallet);
         }
 
         public void Guard(string phoneNumber, string userName, IUserDomainService userDomainService)

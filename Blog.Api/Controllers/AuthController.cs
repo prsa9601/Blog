@@ -42,8 +42,6 @@ public class AuthController : ApiController
             return CommandResult(result);
         }
 
-      
-
         var loginResult = await AddTokenAndGenerateJwt(user);
         return CommandResult(loginResult);
     }

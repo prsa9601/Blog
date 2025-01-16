@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Blog.Domain.CategoryAgg.Repository;
+﻿using Blog.Domain.CategoryAgg.Repository;
 using Blog.Domain.CategoryAgg.Services;
 using Common.Application;
 
 namespace Blog.Application.Category.Create
 {
-    public class CreateCategoryCommandHandler : IBaseCommandHandler<CreateCategoryCommand>
+    public class CreateCategoryCommandHandler : IBaseCommandHandler<CreateCategoryCommand,long>
     {
         private readonly ICategoryDomainService _service;
         private readonly ICategoryRepository _repository;
@@ -20,12 +15,12 @@ namespace Blog.Application.Category.Create
             _service = service;
         }
 
-        public async Task<OperationResult> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<long>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = new Domain.CategoryAgg.Category(request.Title, request.MetaTag, request.MetaDescription, request.Slug, _service);
+            var category = new Domain.CategoryAgg.Category(request.Title, request.Slug, request.SeoData, _service);
             _repository.Add(category);
             await _repository.Save();
-            return OperationResult.Success();
+            return OperationResult<long>.Success(category.Id);
         }
     }
 }

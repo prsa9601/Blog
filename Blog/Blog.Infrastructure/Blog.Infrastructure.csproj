@@ -20,4 +20,10 @@
     <ProjectReference Include="..\Blog.Application\Blog.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Persistent.Ef\Order\Repository\" />
+    <Folder Include="Persistent.Ef\Product\Repository\" />
+    <Folder Include="Persistent.Ef\SiteEntities\Repository\" />
+  </ItemGroup>
+
 </Project>

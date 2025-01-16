@@ -1,6 +1,4 @@
-﻿
-
-using Blog.Query.Post.DTOs;
+﻿using Blog.Query.Post.DTOs;
 using Common.Application;
 using Common.Query;
 

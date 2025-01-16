@@ -23,9 +23,10 @@ namespace Blog.Application.Category.Edit
         public async Task<OperationResult> Handle(EditCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _repository.GetTracking(request.Id);
-            if (category == null) 
+            if (category == null)
                 return OperationResult.NotFound();
-            category.Edit(request.Title, request.Slug, request.MetaTag, request.MetaDescription, _service);
+
+            category.Edit(request.Title, request.Slug, request.SeoData, _service);
             await _repository.Save();
             return OperationResult.Success();
         }

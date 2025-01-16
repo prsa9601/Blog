@@ -2,10 +2,11 @@
 using Blog.Query.Category.DTOs;
 using Common.Query;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace Blog.Query.Category.GetById;
 
-public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryDto?>
+internal class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryDto>
 {
     private readonly BlogContext _context;
 
@@ -14,17 +15,10 @@ public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, C
         _context = context;
     }
 
-    public async Task<CategoryDto?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
+    public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var category = await _context.Categories.FirstOrDefaultAsync(i => i.Id == request.categoryId);
-        return new CategoryDto()
-        {
-            Title = category.Title,
-            Slug = category.Slug,
-            Id = category.Id,
-            MetaDescription = category.MetaDescription,
-            CreationDate = category.CreationDate,
-            MetaTag = category.MetaTag
-        };
+        var model = await _context.Categories
+            .FirstOrDefaultAsync(f => f.Id == request.CategoryId, cancellationToken);
+        return model.Map();
     }
 }

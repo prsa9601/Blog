@@ -1,88 +1,79 @@
 ﻿using Blog.Query.Category.DTOs;
-using Blog.Infrastructure.Persistent.Ef;
 
-namespace Blog.Query.Category
+namespace Blog.Query.Category;
+
+internal static class CategoryMapper
 {
-    public static class CategoryMapper
+    public static CategoryDto Map(this Domain.CategoryAgg.Category? category)
     {
-        public static List<CategoryDto?> Map(this List<Domain.CategoryAgg.Category?> categories)
+        if (category == null)
+            return null;
+
+        return new CategoryDto()
         {
-            var model = new List<CategoryDto>();
+            Title = category.Title,
+            Slug = category.Slug,
+            Id = category.Id,
+            SeoData = category.SeoData,
+            CreationDate = category.CreationDate,
+            Childs = category.Childs.MapChildren()
+        };
+    }
+    public static List<CategoryDto> Map(this List<Domain.CategoryAgg.Category> categories)
+    {
+        var model = new List<CategoryDto>();
 
-            categories.ForEach(category =>
-            {
-                model.Add(new CategoryDto()
-                {
-                    Title = category.Title,
-                    Slug = category.Slug,
-                    Id = category.Id,
-                    MetaDescription = category.MetaDescription,
-                    CreationDate = category.CreationDate,
-                    MetaTag = category.MetaTag,
-                });
-            });
-
-            return model;
-        }
-        public static List<CategoryForShopDto?> MapForShop(this List<Domain.CategoryAgg.Category?> categories, BlogContext context)
+        categories.ForEach(category =>
         {
-            var model = new List<CategoryForShopDto>();
-
-            categories.ForEach(category =>
-            {
-                model.Add(new CategoryForShopDto()
-                {
-                    Title = category.Title,
-                    Slug = category.Slug,
-                    Id = category.Id,
-                    MetaDescription = category.MetaDescription,
-                    CreationDate = category.CreationDate,
-                    MetaTag = category.MetaTag,
-                    posts = context.Posts.Where(i=>i.CategoryId == category.Id).ToList().MapPost(context)
-                });
-            });
-
-            return model;
-        }
-        public static List<PostCategoryDto?> MapPost(this List<Domain.PostAgg.Post?> posts, BlogContext context)
-        {
-            var model = new List<PostCategoryDto>();
-
-            posts.ForEach(post =>
-            {
-                model.Add(new PostCategoryDto()
-                {
-                    Title = post.Title,
-                    Slug = post.Slug,
-                    Id = post.Id,
-                    CreationDate = post.CreationDate,
-                    UserId = post.UserId,
-                    Visit = post.Visit,
-                    Description = post.Description,
-                    ImageName = post.ImageName,
-                    CategoryId = post.CategoryId,
-                    UserFullName = context.Users.Where(i=>i.Id == post.UserId).Select(i=>i.Name+i.Family).FirstOrDefault()
-                });
-            });
-
-            return model;
-        }
-        public static CategoryForShopDto? MapCategoryForShop(this Domain.CategoryAgg.Category? category, BlogContext context)
-        {
-
-
-            return new CategoryForShopDto()
+            model.Add(new CategoryDto()
             {
                 Title = category.Title,
                 Slug = category.Slug,
                 Id = category.Id,
-                MetaDescription = category.MetaDescription,
+                SeoData = category.SeoData,
                 CreationDate = category.CreationDate,
-                MetaTag = category.MetaTag,
-                posts = context.Posts.Where(i => i.Id == category.Id).ToList().MapPost(context)
-            };
+                Childs = category.Childs.MapChildren()
+            });
+        });
 
-         
-        }
+        return model;
+    }
+
+    public static List<ChildCategoryDto> MapChildren(this List<Domain.CategoryAgg.Category> children)
+    {
+        var model = new List<ChildCategoryDto>();
+
+        children.ForEach(c =>
+        {
+            model.Add(new ChildCategoryDto()
+            {
+                Title = c.Title,
+                Slug = c.Slug,
+                Id = c.Id,
+                SeoData = c.SeoData,
+                CreationDate = c.CreationDate,
+                ParentId = (long)c.ParentId,
+                Childs = c.Childs.MapSecondaryChild()
+            });
+        });
+        return model;
+    }
+
+    private static List<SecondaryChildCategoryDto> MapSecondaryChild(this List<Domain.CategoryAgg.Category> children)
+    {
+        var model = new List<SecondaryChildCategoryDto>();
+        children.ForEach(c =>
+        {
+            model.Add(new SecondaryChildCategoryDto()
+            {
+                Title = c.Title,
+                Slug = c.Slug,
+                Id = c.Id,
+                SeoData = c.SeoData,
+                CreationDate = c.CreationDate,
+                ParentId = (long)c.ParentId,
+            });
+        });
+        return model;
     }
 }
